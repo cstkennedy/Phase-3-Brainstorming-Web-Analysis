@@ -120,25 +120,25 @@ class HTMLDocument {
 class Anchor {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
 }
 
 class Image {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
 }
 
 class Script {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
 }
 
 class StyleSheet {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
 }
 
 Website o-- HTMLDocument
@@ -184,28 +184,28 @@ class HTMLDocument {
 class Anchor {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
 }
 
 class Image {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
 }
 
 class Script {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
 }
 
 class StyleSheet {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
 }
 
@@ -255,7 +255,7 @@ class HTMLDocument {
 class Resource {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
 }
 
@@ -327,7 +327,7 @@ class HTMLDocument {
 class Resource {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
     typeOfResource: ResourceKind
     sizeOfFile: long
@@ -433,7 +433,7 @@ class HTMLDocument {
 class Resource {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
     typeOfResource: ResourceKind
     sizeOfFile: long
@@ -541,7 +541,7 @@ class HTMLDocument {
 class Resource {
     path: Path
     url: URL
-    found_on: Collection<HTMLDocument>
+    foundOn: Collection<HTMLDocument>
     location: Locality
     typeOfResource: ResourceKind
     sizeOfFile: long
