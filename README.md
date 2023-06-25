@@ -2,7 +2,7 @@
 title: Brainstorming - Web Analysis
 toc: yes
 author: Thomas J. Kennedy
---- 
+---
 
 # Overview
 
@@ -14,7 +14,7 @@ Models to capture the structure of a website.
 ## Useful Command(s)
 
 To generate an HTML file and all the diagrams on your local machine:
-  
+
   1. Run `git clone git@github.com:cstkennedy/Phase-3-Brainstorming-Web-Analysis.git`
   2. Run `plantuml -tsvg README.md  ; pandoc README.md --standalone --toc -c
      pandoc.css  -o README.html` from a Linux shell after installing pandoc and
@@ -24,8 +24,11 @@ To generate an HTML file and all the diagrams on your local machine:
 ## Acknowledgments
 
 Thank you to
-<https://gist.github.com/noamtamim/f11982b28602bd7e604c233fbe9d910f> for the
-guide to generating PlantUML diagrams from Markdown code snippets.
+
+  1. <https://gist.github.com/noamtamim/f11982b28602bd7e604c233fbe9d910f> for
+     the guide to generating PlantUML diagrams from Markdown code snippets.
+
+  2. <https://gist.github.com/killercup> for the [pandoc.css](https://gist.githubusercontent.com/killercup/5917178/raw/40840de5352083adb2693dc742e9f75dbb18650f/pandoc.css)
 
 
 # Domain Models
@@ -297,7 +300,7 @@ comfortable doing so just yet. I have a few concerns, including
 
   1. Are their behaviors (e.g., member functions) that need to be captured?
   2. Will `abstract` methods or *dynamic binding* be useful during analysis?
-  3. Will class-specific `static` constants be used? 
+  3. Will class-specific `static` constants be used?
 
 Let us leave the classes for now. We can always remove them later.
 
@@ -376,7 +379,7 @@ HTMLDocument o-- Resource
 
 ![](domain_05.svg)
 
-*I will leave adding all options to `ResouceKind` up to you and your team.* 
+*I will leave adding all options to `ResouceKind` up to you and your team.*
 
 Take note of the two new fields in `Resource`:
 
@@ -630,3 +633,377 @@ Take note of the three methods in `Report`:
 Note that `write` is intended a common `public` function that each report base
 class will implement. The actual logic to generate a given report should happen
 before `write` is called, e.g., in a `prepare` method.
+
+
+## Inspiration from the C++ std::ostream, Java BufferedWriter & Python TextIO
+
+I do not like the names of the `Report` classes. I would argue that these
+classes do not represent the reports being generated, but the person who would
+create these reports in a manual process.
+
+Let us rename
+
+  - `Report` to `ReportWriter`
+  - `ReportConsole` to `ConsoleReportWriter`
+  - `ReportText` to `TextReportWriter`
+  - `ReportJSON` to `JSONReportWriter`
+  - `ReportExcel` to `ExcelReportWriter`
+
+
+```plantuml
+@startuml analysis_03.svg
+hide empty members
+
+class Website {
+    local_directory: Path
+    urls: URL
+}
+
+class HTMLDocument {
+    scripts: Collection<Script>
+    stylesheets: Collection<StyleSheet>
+    images: Collection<Image>
+    anchors: Collection<Anchor>
+}
+
+class Resource {
+    path: Path
+    url: URL
+    foundOn: Collection<HTMLDocument>
+    location: Locality
+    typeOfResource: ResourceKind
+    sizeOfFile: long
+}
+
+class Anchor {
+
+}
+
+class Image {
+}
+
+class Script {
+}
+
+class StyleSheet {
+}
+
+enum Locality <<Enum>> {
+    INTERNAL
+    INTRAPAGE
+    EXTERNAL
+}
+
+enum ResourceKind <<Enum>> {
+    IMAGE
+    STYLESHEET
+    SCRIPT
+    ANCHOR
+    VIDEO
+    AUDIO
+    ARCHIVE
+    OTHER
+}
+
+class ReportWriter {
+    website: Website
+
+    setSourceData(site: Website)
+    setBaseName(baseFileName: String)
+
+    write()
+}
+
+class ConsoleReportWriter {
+
+}
+
+class TextReportWriter {
+
+}
+
+class JSONReportWriter {
+
+}
+
+class ExcelReportWriter {
+
+}
+
+Resource <|-- Image
+Resource <|-- Script
+Resource <|-- StyleSheet
+Resource <|-- Anchor
+
+Website o-- HTMLDocument
+HTMLDocument o-- Resource
+
+ReportWriter <|-- ConsoleReportWriter
+ReportWriter <|-- TextReportWriter
+ReportWriter <|-- JSONReportWriter
+ReportWriter <|-- ExcelReportWriter
+
+@enduml
+```
+
+![](analysis_03.svg)
+
+
+## Something Does Not Fit
+
+Have you been wondering abour `ConsoleReportWriter`? It is different from the
+other reports:
+
+  1. It does **not** examine the `Website` data.
+  2. It does not have a filename.
+
+Perhaps it should really be a `ReportManager` class. A class that handles the:
+
+  - [Date and Time](https://www.w3schools.com/java/java_date.asp) logic needed
+    to set the basename for each report.
+
+  - Coordination of sending all reports the same data, calling the `prepare`
+    and `write` methods.
+
+
+```plantuml
+@startuml analysis_04.svg
+hide empty members
+
+class Website {
+    local_directory: Path
+    urls: URL
+}
+
+class HTMLDocument {
+    scripts: Collection<Script>
+    stylesheets: Collection<StyleSheet>
+    images: Collection<Image>
+    anchors: Collection<Anchor>
+}
+
+class Resource {
+    path: Path
+    url: URL
+    foundOn: Collection<HTMLDocument>
+    location: Locality
+    typeOfResource: ResourceKind
+    sizeOfFile: long
+}
+
+class Anchor {
+
+}
+
+class Image {
+}
+
+class Script {
+}
+
+class StyleSheet {
+}
+
+enum Locality <<Enum>> {
+    INTERNAL
+    INTRAPAGE
+    EXTERNAL
+}
+
+enum ResourceKind <<Enum>> {
+    IMAGE
+    STYLESHEET
+    SCRIPT
+    ANCHOR
+    VIDEO
+    AUDIO
+    ARCHIVE
+    OTHER
+}
+
+class ReportManager {
+    setSourceData(site: Website)
+    determineBaseFilename()
+    writeReportNames(outs: BufferedWriter)
+
+    writeAll()
+}
+
+class ReportWriter {
+    website: Website
+
+    setSourceData(site: Website)
+    setBaseName(baseFileName: String)
+
+    write()
+}
+
+class TextReportWriter {
+
+}
+
+class JSONReportWriter {
+
+}
+
+class ExcelReportWriter {
+
+}
+
+Resource <|-- Image
+Resource <|-- Script
+Resource <|-- StyleSheet
+Resource <|-- Anchor
+
+Website o-- HTMLDocument
+HTMLDocument o-- Resource
+
+ReportWriter <|-- TextReportWriter
+ReportWriter <|-- JSONReportWriter
+ReportWriter <|-- ExcelReportWriter
+
+ReportManager --> "3" ReportWriter: "creates and manages"
+
+@enduml
+```
+
+![](analysis_04.svg)
+
+I am much happier with that. Note the four functions in `ReportManager`
+
+  - `setSourceData(site: Website)` - same is in the `Report` interface
+  - `determineBaseFilename()` - take the current date and time and format it accordingly
+
+  - `writeReportNames(outs: BufferedWriter)` - output the filename for each
+    file report. Note that the `BufferedWriter` is not necessary, but it will
+    make development, testing, and debugging tremendously easy. [*Trust me
+    Bro.*](https://www.youtube.com/watch?v=I1rCEL9uGwk). *Yes, that is a WAN Show
+    reference.*
+
+  - `writeAll()` - Handle calling each of the `ReportWriter` derived classes'
+    `write` methods.
+
+
+## Where is the Actual Analysis?
+
+This is where the [Builder
+Pattern](https://github.com/cstkennedy/cs330-examples/tree/master/Review-14-Python-Builder-Pattern/Example-3)
+will come into play. Let us start by adding two classes:
+
+  1. `WebsiteBuilder`
+  2. `HTMLDocumentBuilder`
+
+
+*Note: Let us stick with "Builder" even though "Parser" might be a more "intuitive" name.*
+
+
+> ```plantuml
+> @startuml analysis_05.svg
+> hide empty members
+> 
+> class Website {
+>     local_directory: Path
+>     urls: URL
+> }
+> 
+> class HTMLDocument {
+>     scripts: Collection<Script>
+>     stylesheets: Collection<StyleSheet>
+>     images: Collection<Image>
+>     anchors: Collection<Anchor>
+> }
+> 
+> class Resource {
+>     path: Path
+>     url: URL
+>     foundOn: Collection<HTMLDocument>
+>     location: Locality
+>     typeOfResource: ResourceKind
+>     sizeOfFile: long
+> }
+> 
+> class Anchor {
+> 
+> }
+> 
+> class Image {
+> }
+> 
+> class Script {
+> }
+> 
+> class StyleSheet {
+> }
+> 
+> enum Locality <<Enum>> {
+>     INTERNAL
+>     INTRAPAGE
+>     EXTERNAL
+> }
+> 
+> enum ResourceKind <<Enum>> {
+>     IMAGE
+>     STYLESHEET
+>     SCRIPT
+>     ANCHOR
+>     VIDEO
+>     AUDIO
+>     ARCHIVE
+>     OTHER
+> }
+> 
+> class ReportManager {
+>     setSourceData(site: Website)
+>     determineBaseFilename()
+>     writeReportNames(outs: BufferedWriter)
+> 
+>     writeAll()
+> }
+> 
+> class ReportWriter {
+>     website: Website
+> 
+>     setSourceData(site: Website)
+>     setBaseName(baseFileName: String)
+> 
+>     write()
+> }
+> 
+> class TextReportWriter {
+> 
+> }
+> 
+> class JSONReportWriter {
+> 
+> }
+> 
+> class ExcelReportWriter {
+> 
+> }
+> 
+> class WebsiteBuilder {
+> 
+> }
+> 
+> class HTMLDocumentBuilder {
+> 
+> }
+> 
+> Resource <|-- Image
+> Resource <|-- Script
+> Resource <|-- StyleSheet
+> Resource <|-- Anchor
+> 
+> Website o-- HTMLDocument
+> HTMLDocument o-- Resource
+> 
+> ReportWriter <|-- TextReportWriter
+> ReportWriter <|-- JSONReportWriter
+> ReportWriter <|-- ExcelReportWriter
+> 
+> ReportManager --> "3" ReportWriter: "creates and manages"
+> 
+> @enduml
+> ```
+
+![](analysis_05.svg)
