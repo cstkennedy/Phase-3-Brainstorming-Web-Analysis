@@ -897,113 +897,113 @@ will come into play. Let us start by adding two classes:
 *Note: Let us stick with "Builder" even though "Parser" might be a more "intuitive" name.*
 
 
-> ```plantuml
-> @startuml analysis_05.svg
-> hide empty members
-> 
-> class Website {
->     local_directory: Path
->     urls: URL
-> }
-> 
-> class HTMLDocument {
->     scripts: Collection<Script>
->     stylesheets: Collection<StyleSheet>
->     images: Collection<Image>
->     anchors: Collection<Anchor>
-> }
-> 
-> class Resource {
->     path: Path
->     url: URL
->     foundOn: Collection<HTMLDocument>
->     location: Locality
->     typeOfResource: ResourceKind
->     sizeOfFile: long
-> }
-> 
-> class Anchor {
-> 
-> }
-> 
-> class Image {
-> }
-> 
-> class Script {
-> }
-> 
-> class StyleSheet {
-> }
-> 
-> enum Locality <<Enum>> {
->     INTERNAL
->     INTRAPAGE
->     EXTERNAL
-> }
-> 
-> enum ResourceKind <<Enum>> {
->     IMAGE
->     STYLESHEET
->     SCRIPT
->     ANCHOR
->     VIDEO
->     AUDIO
->     ARCHIVE
->     OTHER
-> }
-> 
-> class ReportManager {
->     setSourceData(site: Website)
->     determineBaseFilename()
->     writeReportNames(outs: BufferedWriter)
-> 
->     writeAll()
-> }
-> 
-> class ReportWriter {
->     website: Website
-> 
->     setSourceData(site: Website)
->     setBaseName(baseFileName: String)
-> 
->     write()
-> }
-> 
-> class TextReportWriter {
-> 
-> }
-> 
-> class JSONReportWriter {
-> 
-> }
-> 
-> class ExcelReportWriter {
-> 
-> }
-> 
-> class WebsiteBuilder {
-> 
-> }
-> 
-> class HTMLDocumentBuilder {
-> 
-> }
-> 
-> Resource <|-- Image
-> Resource <|-- Script
-> Resource <|-- StyleSheet
-> Resource <|-- Anchor
-> 
-> Website o-- HTMLDocument
-> HTMLDocument o-- Resource
-> 
-> ReportWriter <|-- TextReportWriter
-> ReportWriter <|-- JSONReportWriter
-> ReportWriter <|-- ExcelReportWriter
-> 
-> ReportManager --> "3" ReportWriter: "creates and manages"
-> 
-> @enduml
-> ```
+```plantuml
+@startuml analysis_05.svg
+hide empty members
+
+class Website {
+    local_directory: Path
+    urls: URL
+}
+
+class HTMLDocument {
+    scripts: Collection<Script>
+    stylesheets: Collection<StyleSheet>
+    images: Collection<Image>
+    anchors: Collection<Anchor>
+}
+
+class Resource {
+    path: Path
+    url: URL
+    foundOn: Collection<HTMLDocument>
+    location: Locality
+    typeOfResource: ResourceKind
+    sizeOfFile: long
+}
+
+class Anchor {
+
+}
+
+class Image {
+}
+
+class Script {
+}
+
+class StyleSheet {
+}
+
+enum Locality <<Enum>> {
+    INTERNAL
+    INTRAPAGE
+    EXTERNAL
+}
+
+enum ResourceKind <<Enum>> {
+    IMAGE
+    STYLESHEET
+    SCRIPT
+    ANCHOR
+    VIDEO
+    AUDIO
+    ARCHIVE
+    OTHER
+}
+
+class ReportManager {
+    setSourceData(site: Website)
+    determineBaseFilename()
+    writeReportNames(outs: BufferedWriter)
+
+    writeAll()
+}
+
+class ReportWriter {
+    website: Website
+
+    setSourceData(site: Website)
+    setBaseName(baseFileName: String)
+
+    write()
+}
+
+class TextReportWriter {
+
+}
+
+class JSONReportWriter {
+
+}
+
+class ExcelReportWriter {
+
+}
+
+class WebsiteBuilder {
+
+}
+
+class HTMLDocumentBuilder {
+
+}
+
+Resource <|-- Image
+Resource <|-- Script
+Resource <|-- StyleSheet
+Resource <|-- Anchor
+
+Website o-- HTMLDocument
+HTMLDocument o-- Resource
+
+ReportWriter <|-- TextReportWriter
+ReportWriter <|-- JSONReportWriter
+ReportWriter <|-- ExcelReportWriter
+
+ReportManager --> "3" ReportWriter: "creates and manages"
+
+@enduml
+```
 
 ![](analysis_05.svg)
