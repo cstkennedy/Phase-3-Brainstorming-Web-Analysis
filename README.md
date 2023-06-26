@@ -174,7 +174,7 @@ Now we need a way to represent the notion of:
   - External
 
 An Enumerated Type is perfect. An `enum` is similar to a `boolean` (`true` or
-`false`). While a `boolean` is restricted to yes (`true`) or no (`false`)... a
+`false`). While a `boolean` is restricted to yes (`true`) or no (`false`)... an
 `enum` is restricted to programmer-specified categories.
 
 ```plantuml
