@@ -423,7 +423,7 @@ There is quite a bit of logic to implement. However, we are interested in:
 
 To that end let us take a *meet-in-the-middle* approach to design. We already
 have the structure of a website (i.e., where we will store the data generated during
-analysis. Let us explore how to represent the various reports.
+analysis). Let us explore how to represent the various reports.
 
 
 ```plantuml
