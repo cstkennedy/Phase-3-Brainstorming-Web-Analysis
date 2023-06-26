@@ -27,7 +27,7 @@ To generate an HTML file and all the diagrams on your local machine:
   plantuml -tsvg README.md  ; pandoc README.md --standalone --toc -c pandoc.css  -o README.html
   ```
 
-  from a Linux shell after installing pand oc and plantuml.
+  from a Linux shell after installing pandoc and plantuml.
 
 
 ## Acknowledgments
