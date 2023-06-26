@@ -1163,6 +1163,161 @@ constructor. *This is where the builder pattern can be particularly useful.*
 The actual object creation does not occur until `build` is called.
 
 
+## Adding a Few Extraction Methods
+
+Let us add the resource extraction methods.
+
+```plantuml
+@startuml analysis_07.svg
+hide empty members
+
+class Website {
+    local_directory: Path
+    urls: URL
+}
+
+class HTMLDocument {
+    scripts: Collection<Script>
+    stylesheets: Collection<StyleSheet>
+    images: Collection<Image>
+    anchors: Collection<Anchor>
+}
+
+class Resource {
+    path: Path
+    url: URL
+    foundOn: Collection<HTMLDocument>
+    location: Locality
+    typeOfResource: ResourceKind
+    sizeOfFile: long
+}
+
+class Anchor {
+
+}
+
+class Image {
+}
+
+class Script {
+}
+
+class StyleSheet {
+}
+
+enum Locality <<Enum>> {
+    INTERNAL
+    INTRAPAGE
+    EXTERNAL
+}
+
+enum ResourceKind <<Enum>> {
+    IMAGE
+    STYLESHEET
+    SCRIPT
+    ANCHOR
+    VIDEO
+    AUDIO
+    ARCHIVE
+    OTHER
+}
+
+class ReportManager {
+    setSourceData(site: Website)
+    determineBaseFilename()
+    writeReportNames(outs: BufferedWriter)
+
+    writeAll()
+}
+
+class ReportWriter {
+    website: Website
+
+    setSourceData(site: Website)
+    setBaseName(baseFileName: String)
+
+    write()
+}
+
+class TextReportWriter {
+
+}
+
+class JSONReportWriter {
+
+}
+
+class ExcelReportWriter {
+
+}
+
+class WebsiteBuilder {
+    withPath(path: Path)
+    withURL(url: URL)
+    withURLs(urls: Collection<URL>)
+    
+    build() -> Website
+}
+
+class HTMLDocumentBuilder {
+    withContentFrom(reader: BufferedReader)
+    withContentFrom(file: File)
+    withBaseDirectory(siteRoot: Path)
+    withBaseURLs(urls: Collection<URL>)
+
+    extractAnchors() -> Collection<Resource>
+    extractImages() -> Collection<Resource>
+    extractScripts() -> Collection<Resource>
+    extractStyleSheets() -> Collection<Resource>
+
+    build() -> HTMLDocument
+}
+
+Resource <|-- Image
+Resource <|-- Script
+Resource <|-- StyleSheet
+Resource <|-- Anchor
+
+Website o-- HTMLDocument
+HTMLDocument o-- Resource
+
+ReportWriter <|-- TextReportWriter
+ReportWriter <|-- JSONReportWriter
+ReportWriter <|-- ExcelReportWriter
+
+ReportManager --> "3" ReportWriter: "creates and manages"
+
+WebsiteBuilder --> Website: "constructs"
+WebsiteBuilder ..> HTMLDocumentBuilder
+HTMLDocumentBuilder --> HTMLDocument: "constructs"
+
+@enduml
+```
+
+![](analysis_07.svg)
+
+We have quite a few additions. The first two methods pass in the two pieces of
+data we need for path normalization and resouce classification:
+
+  - `withBaseDirectory(siteRoot: Path)`
+  - `withBaseURLs(urls: Collection<URL>)`
+
+The remaining four (4) methods handle extracting one type of `Resource`. While
+we might be able to factor out some common logic (and add a few utility
+functions)... these four public methods will simplify testing and debugging.
+
+    extractAnchors() -> Collection<Resource>
+    extractImages() -> Collection<Resource>
+    extractScripts() -> Collection<Resource>
+    extractStyleSheets() -> Collection<Resource>
+
+Take note of how each method returns a `Collection` of `Resource` objects.
+I will write these functions so that they both:
+
+  1. Store the `Resource` collection as an attribute (private data member).
+  2. Return a reference to the collection for testing and debugging purposes.
+
+
 # Closing Remarks & Guidance
 
   1. Use `BufferedReader` for input and `BufferedWriter` for output. This will
@@ -1176,7 +1331,8 @@ The actual object creation does not occur until `build` is called.
      - read a short piece of data from a hardcoded string in a unit test.
 
   2. There are quite a few missing methods. However, the only classes we need
-     to add are `Exception`s and a driver class to wrap:
+     to add are `Exception`s, utility classes (e.g., for path normalization),
+     and a driver class to wrap:
 
      ```java
      public static void main(String... args)
@@ -1186,3 +1342,7 @@ The actual object creation does not occur until `build` is called.
      sibling classes (and ~20% of teams in previous Summer Semesters have taken
      this approach). However, my approach would introduce a `ResourceFactory` to
      simplify the creation logic.
+
+  4. We still need to make sure that each class follows the [Java Class
+     Checklist](https://cs.odu.edu/~tkennedy/cs330/latest/Public/classChecklistCrossLanguage),
+     including accessors and mutators.
