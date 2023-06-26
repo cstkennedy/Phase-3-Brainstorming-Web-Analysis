@@ -15,10 +15,19 @@ Models to capture the structure of a website.
 
 To generate an HTML file and all the diagrams on your local machine:
 
-  1. Run `git clone git@github.com:cstkennedy/Phase-3-Brainstorming-Web-Analysis.git`
-  2. Run `plantuml -tsvg README.md  ; pandoc README.md --standalone --toc -c
-     pandoc.css  -o README.html` from a Linux shell after installing pandoc and
-     plantuml.
+  1. Run 
+
+  ```
+  git clone git@github.com:cstkennedy/Phase-3-Brainstorming-Web-Analysis.git
+  ```
+
+  2. Run 
+
+  ```
+  plantuml -tsvg README.md  ; pandoc README.md --standalone --toc -c pandoc.css  -o README.html
+  ```
+
+  from a Linux shell after installing pand oc and plantuml.
 
 
 ## Acknowledgments
@@ -1007,3 +1016,173 @@ ReportManager --> "3" ReportWriter: "creates and manages"
 ```
 
 ![](analysis_05.svg)
+
+But... where do `WebsiteBuilder` and `HTMLDocumentBuilder` *fit*?
+
+  1. `WebsiteBuilder` will be responsible for collecting all information needed to
+    create a `Website` object:
+
+    1. one local directory path
+    2. one *or more* URLs
+
+  2. `HTMLDocumentBuilder` will be responsible for extracting all tags from a
+     *single* file containing HTML content. This is where our HTML parsing
+     logic will exist.
+
+```plantuml
+@startuml analysis_06.svg
+hide empty members
+
+class Website {
+    local_directory: Path
+    urls: URL
+}
+
+class HTMLDocument {
+    scripts: Collection<Script>
+    stylesheets: Collection<StyleSheet>
+    images: Collection<Image>
+    anchors: Collection<Anchor>
+}
+
+class Resource {
+    path: Path
+    url: URL
+    foundOn: Collection<HTMLDocument>
+    location: Locality
+    typeOfResource: ResourceKind
+    sizeOfFile: long
+}
+
+class Anchor {
+
+}
+
+class Image {
+}
+
+class Script {
+}
+
+class StyleSheet {
+}
+
+enum Locality <<Enum>> {
+    INTERNAL
+    INTRAPAGE
+    EXTERNAL
+}
+
+enum ResourceKind <<Enum>> {
+    IMAGE
+    STYLESHEET
+    SCRIPT
+    ANCHOR
+    VIDEO
+    AUDIO
+    ARCHIVE
+    OTHER
+}
+
+class ReportManager {
+    setSourceData(site: Website)
+    determineBaseFilename()
+    writeReportNames(outs: BufferedWriter)
+
+    writeAll()
+}
+
+class ReportWriter {
+    website: Website
+
+    setSourceData(site: Website)
+    setBaseName(baseFileName: String)
+
+    write()
+}
+
+class TextReportWriter {
+
+}
+
+class JSONReportWriter {
+
+}
+
+class ExcelReportWriter {
+
+}
+
+class WebsiteBuilder {
+    withPath(path: Path)
+    withURL(url: URL)
+    withURLs(urls: Collection<URL>)
+    
+    build() -> Website
+}
+
+class HTMLDocumentBuilder {
+    withContentFrom(reader: BufferedReader)
+    withContentFrom(file: File)
+
+    build() -> HTMLDocument
+}
+
+Resource <|-- Image
+Resource <|-- Script
+Resource <|-- StyleSheet
+Resource <|-- Anchor
+
+Website o-- HTMLDocument
+HTMLDocument o-- Resource
+
+ReportWriter <|-- TextReportWriter
+ReportWriter <|-- JSONReportWriter
+ReportWriter <|-- ExcelReportWriter
+
+ReportManager --> "3" ReportWriter: "creates and manages"
+
+WebsiteBuilder --> Website: "constructs"
+WebsiteBuilder ..> HTMLDocumentBuilder
+HTMLDocumentBuilder --> HTMLDocument: "constructs"
+
+@enduml
+```
+
+![](analysis_06.svg)
+
+Take note of how `WebsiteBuilder` depends on `HTMLDocumentBuilder`. While the
+former may identify files to examine... the latter handles the actual parsing.
+
+You will also notice a few `with` methods. This convention is used to supply
+*arguments* or *values* needed to create a non-trivial object (e.g., one that
+requires File IO). In general... complicated initialization (e.g. random number
+generation, file IO, nested object initialization) should **not** be done in a
+constructor. *This is where the builder pattern can be particularly useful.*
+
+The actual object creation does not occur until `build` is called.
+
+
+# Closing Remarks & Guidance
+
+  1. Use `BufferedReader` for input and `BufferedWriter` for output. This will
+     make testing a lot easier.
+
+     For example... `BufferedReader` can use either
+     a `File` of a `String` as a data source. This allows us to
+
+     - read a file in production code.
+ 
+     - read a short piece of data from a hardcoded string in a unit test.
+
+  2. There are quite a few missing methods. However, the only classes we need
+     to add are `Exception`s and a driver class to wrap:
+
+     ```java
+     public static void main(String... args)
+     ```
+
+  3. We could simply the `Resource` handling by removing `Anchor` and its
+     sibling classes (and ~20% of teams in previous Summer Semesters have taken
+     this approach). However, my approach would introduce a `ResourceFactory` to
+     simplify the creation logic.
