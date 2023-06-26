@@ -103,7 +103,7 @@ After the first two classes we have a class for each type of resource:
   - Script
   - StyleSheet
 
-**Note that while we need to represents collections of data... we are not
+**Note that while we need to represent collections of data... we are not
 interested in a specific data structure.** The `Collection` is a placeholder
 for any data structure that can hold multiple items and be iterated over (e.g.,
 `List` or `Vector`).
