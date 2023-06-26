@@ -307,7 +307,7 @@ Now that we have factored out the common data members... it is tempting to
 remove `Anchor`, `Image`, `Script`, and `Stylesheet`. However, I am not
 comfortable doing so just yet. I have a few concerns, including
 
-  1. Are their behaviors (e.g., member functions) that need to be captured?
+  1. Are there behaviors (e.g., member functions) that need to be captured?
   2. Will `abstract` methods or *dynamic binding* be useful during analysis?
   3. Will class-specific `static` constants be used?
 
