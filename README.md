@@ -1182,7 +1182,7 @@ The actual object creation does not occur until `build` is called.
      public static void main(String... args)
      ```
 
-  3. We could simply the `Resource` handling by removing `Anchor` and its
+  3. We could simplify the `Resource` handling by removing `Anchor` and its
      sibling classes (and ~20% of teams in previous Summer Semesters have taken
      this approach). However, my approach would introduce a `ResourceFactory` to
      simplify the creation logic.
