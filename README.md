@@ -57,8 +57,8 @@ later in the process.
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -118,8 +118,8 @@ Let us explore what each class needs to store.
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -182,8 +182,8 @@ An Enumerated Type is perfect. An `enum` is similar to a `boolean` (`true` or
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -253,8 +253,8 @@ The `Resource` classes are (at the moment) identical. Let us define a
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -325,8 +325,8 @@ introduce an "other" type. However, I think using `Resource` and adding another
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -418,7 +418,7 @@ Before starting this part of the lecture... I would like to discuss:
 There is quite a bit of logic to implement. However, we are interested in:
 
   1. identifying the types of analysis that occur
-  2. where each piece of analysis will occur
+  2. determining where each piece of analysis will occur
   3. splitting the analysis into manageable pieces/phases
 
 To that end let us take a *meet-in-the-middle* approach to design. We already
@@ -431,8 +431,8 @@ analysis). Let us explore how to represent the various reports.
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -539,8 +539,8 @@ Let us add a few methods to the `Report` interface.
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -639,9 +639,9 @@ Take note of the three methods in `Report`:
     (e.g., `2023-06-23-165640`)
   - `write()` - used to generate and output the report
 
-Note that `write` is intended a common `public` function that each report base
-class will implement. The actual logic to generate a given report should happen
-before `write` is called, e.g., in a `prepare` method.
+Note that `write` is intended a common `public` function that each report
+derived class will implement. The actual logic to generate a given report
+should happen before `write` is called, e.g., in a `prepare` method.
 
 
 ## Inspiration from the C++ std::ostream, Java BufferedWriter & Python TextIO
@@ -664,8 +664,8 @@ Let us rename
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -780,8 +780,8 @@ Perhaps it should really be a `ReportManager` class. A class that handles the:
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -885,9 +885,9 @@ I am much happier with that. Note the four functions in `ReportManager`
 
   - `writeReportNames(outs: BufferedWriter)` - output the filename for each
     file report. Note that the `BufferedWriter` is not necessary, but it will
-    make development, testing, and debugging tremendously easy. [*Trust me
-    Bro.*](https://www.youtube.com/watch?v=I1rCEL9uGwk). *Yes, that is a WAN Show
-    reference.*
+    make development, testing, and debugging tremendously less frustrating.
+    [*Trust me Bro*](https://www.youtube.com/watch?v=I1rCEL9uGwk). *Yes, that is a
+    WAN Show reference.*
 
   - `writeAll()` - Handle calling each of the `ReportWriter` derived classes'
     `write` methods.
@@ -911,8 +911,8 @@ will come into play. Let us start by adding two classes:
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -1022,8 +1022,8 @@ But... where do `WebsiteBuilder` and `HTMLDocumentBuilder` *fit*?
   1. `WebsiteBuilder` will be responsible for collecting all information needed to
     create a `Website` object:
 
-    1. one local directory path
-    2. one *or more* URLs
+     1. one local directory path
+     2. one *or more* URLs
 
   2. `HTMLDocumentBuilder` will be responsible for extracting all tags from a
      *single* file containing HTML content. This is where our HTML parsing
@@ -1034,8 +1034,8 @@ But... where do `WebsiteBuilder` and `HTMLDocumentBuilder` *fit*?
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -1172,8 +1172,8 @@ Let us add the resource extraction methods.
 hide empty members
 
 class Website {
-    local_directory: Path
-    urls: URL
+    localDirectory: Path
+    urls: Collection<URL>
 }
 
 class HTMLDocument {
@@ -1324,7 +1324,7 @@ I will write these functions so that they both:
      make testing a lot easier.
 
      For example... `BufferedReader` can use either
-     a `File` of a `String` as a data source. This allows us to
+     a `File` or a `String` as a data source. This allows us to
 
      - read a file in production code.
  
