@@ -1346,3 +1346,181 @@ I will write these functions so that they both:
   4. We still need to make sure that each class follows the [Java Class
      Checklist](https://cs.odu.edu/~tkennedy/cs330/latest/Public/classChecklistCrossLanguage),
      including accessors and mutators.
+
+
+# Program Flow
+
+In total... there are three distinct phases into which WebAnalysis program
+logic can be divided:
+
+  1. Data Analysis and Extraction
+  2. Data Normalization (e.g., path and URL normalization)
+  3. Report Generation
+
+
+## Data Analysis and Extraction
+
+Let us examine the actual analysis. *Note that we will focus on the broad
+strokes.* Details such as `Exception`s, page count checks, path
+validation/checks, and URL validation will not be included.
+
+```plantuml
+@startuml sequence_01.svg
+autoactivate on
+hide footbox
+skinparam sequenceParticipant underline
+
+title Data Analysis and Extraction: High-Level View
+
+participant ":WebAnalysis" as driver
+activate driver
+
+create ":WebsiteBuilder" as wb
+
+driver -> wb: new()
+return
+
+driver -> wb: withPath(path)
+return
+
+driver -> wb: withURLs(urls)
+return
+
+driver -> wb: build()
+    wb -> wb: walkDirectory()
+    return files
+    wb -> wb: removeNonHTMLFiles(files)
+    return prunedFiles
+
+    create "site: Website" as site
+    wb -> site: new(path, URLs)
+    return
+
+    loop for htmlFile in prunedFiles
+        create ":BufferedReader" as buffer
+        wb -> buffer: new(htmlFile)
+        return
+        create ":HTMLDocumentBuilder" as hb
+        wb -> hb: new()
+        return
+        wb -> hb: withContentFrom(buffer)
+        return
+        wb -> hb: extractContent()
+            hb -> hb: extractAnchors()
+            return
+            hb -> hb: extractImages()
+            return
+            hb -> hb: extractScripts()
+            return
+            hb -> hb: extractStyleSheets()
+            return
+        return
+        wb -> hb: build()
+            create "doc:HTMLDocument" as doc
+            hb -> doc: new() [creation details not listed]
+            return
+        return doc 
+
+        wb -> buffer !!: delete
+        wb -> hb !!: delete
+
+        wb -> site:addPage(doc)
+        return
+    end
+
+return site
+
+driver -> wb !!: delete
+
+@enduml
+```
+
+![](sequence_01.svg)
+
+**Note that we did not cover the creation details of `HTMLDocument` objects
+within the `HTMLDocumentBuilder.build` method.** I will leave this part up to
+you. Take note of how
+
+  1. all `HTMLDocumentBuilder` objects are destroyed
+  2. `WebsiteBuilder` is destroyed
+  3. all `BufferedReader` objects are destroyed
+
+We have populated the `site` (`Website` object) with all the `HTMLDocument`
+objects. The analysis objects are no longer needed.
+
+
+## Further Analysis
+
+I will leave the intermediary steps (i.e., all steps until report generation)
+up to you and your team.
+
+
+## Report Generation
+
+Since the *Builder* objects have been destroyed... we no longer need to
+consider them.
+
+
+```plantuml
+@startuml sequence_03.svg
+autoactivate on
+hide footbox
+skinparam sequenceParticipant underline
+
+title Data Analysis and Extraction: High-Level View
+
+participant "site:Website" as site
+participant ":WebAnalysis" as driver
+activate driver
+
+
+create ":ReportManager" as manager
+
+driver -> manager: setSourceData(site)
+return
+
+driver -> manager: determineBaseFileName()
+return
+
+driver -> manager: writeAll()
+    create ":TextReportWriter" as textWriter
+    manager -> textWriter: new()
+    return
+    manager -> textWriter: setSourceData(site)
+    return
+    manager -> textWriter: setBaseName(...)
+    return
+    manager -> textWriter: write()
+    return
+    manager -> textWriter !!: delete
+
+    create ":JSONReportWriter" as jsonWriter
+    manager -> jsonWriter: new()
+    return
+    manager -> jsonWriter: setSourceData(site)
+    return
+    manager -> jsonWriter: setBaseName(...)
+    return
+    manager -> jsonWriter: write()
+    return
+    manager -> jsonWriter !!: delete
+
+    create ":ExcelReportWriter" as excelWriter
+    manager -> excelWriter: new()
+    return
+    manager -> excelWriter: setSourceData(site)
+    return
+    manager -> excelWriter: setBaseName(...)
+    return
+    manager -> excelWriter: write()
+    return
+    manager -> excelWriter !!: delete
+return
+
+driver -> manager: writeReportNames(...)
+return
+
+@enduml
+```
+
+![](sequence_03.svg)
