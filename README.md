@@ -1450,6 +1450,21 @@ We have populated the `site` (`Website` object) with all the `HTMLDocument`
 objects. The analysis objects are no longer needed.
 
 
+### Creation & Deletion
+
+Take note of the `new` and `delete` function "calls."
+
+  1. `new` represents a call to a constructor (i.e., creating a new object)
+
+  2. `delete` represents an object being "deallocated" (i.e., leaving scope and
+     being discarded).
+
+     *Even though Java is a Garbage Collected language wherein memory
+     management is not handled explicitly by a programmer... designing around
+     (and making use of) object lifetimes is **still** important.* **(Even if
+     some teachers are cavalier in their approach.)**
+
+
 ## Further Analysis
 
 I will leave the intermediary steps (i.e., all steps until report generation)
@@ -1469,7 +1484,7 @@ hide footbox
 skinparam backgroundColor #FFFFFF
 skinparam sequenceParticipant underline
 
-title Data Analysis and Extraction: High-Level View
+title Report Generation: High-Level View
 
 participant "site:Website" as site
 participant ":WebAnalysis" as driver
@@ -1526,3 +1541,34 @@ return
 ```
 
 ![](sequence_03.svg)
+
+
+## Generating the Reports - Implementation
+
+Working with text files can be accomplished with the Java `BufferedWriter` and
+`FileWriter` classes. The other reports require external libraries. In total
+(including HTML parsing) the following libraries should be utilized...
+
+
+| Organization      | Artifact ID   | Version   | Gradle Dependency                | Description                                                                      |
+| :------------:    | :-----------: | --------- | --------------                   | --------------------------                                                       |
+| **org.jsoup**     | jsoup         | 1.16.1    | org.jsoup:jsoup:1.16.1           | [HTML Parsing](https://jsoup.org/)                                               |
+| org.apache.poi    | poi           | 5.2.3+    | org.apache.poi:poi:5.2.3+        | [Read/write Microsoft document formats](https://poi.apache.org/)                 |
+| org.apache.poi    | poi-ooxml     | 5.2.3+    | org.apache.poi:poi-ooxml:5.2.3+  | [Read & write Excel spreadsheets](https://poi.apache.org/spreadsheet/index.html) |
+| com.cedarsoftware | json-io       | 4.14.0    | com.cedarsoftware:json-io:4.14.0 | [JSON Export/Import](https://github.com/jdereg/json-io)                          |
+
+The table should be familiar... it is listed on the [Design Notes
+page](https://www.cs.odu.edu/~tkennedy/cs350/latest/Protected/websiteAnalysisDesignNotes)
+for the Semester Project. The *Gradle Dependency* column even lists the
+specific dependency for use in `build.gradle`
+
+I recommend adding...
+
+```
+    implementation 'org.jsoup:jsoup:1.16.1'
+    implementation 'org.apache.poi:poi:5.2.3+'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3+'
+    implementation 'com.cedarsoftware:json-io:4.14.0'
+```
+
+to the dependency block within your team's `build.gradle` file.
