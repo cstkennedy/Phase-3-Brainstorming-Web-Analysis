@@ -1494,6 +1494,7 @@ activate driver
 create ":ReportManager" as manager
 
 driver -> manager: new()
+return
 driver -> manager: setSourceData(site)
 return
 
