@@ -1368,6 +1368,7 @@ validation/checks, and URL validation will not be included.
 @startuml sequence_01.svg
 autoactivate on
 hide footbox
+skinparam backgroundColor #FFFFFF
 skinparam sequenceParticipant underline
 
 title Data Analysis and Extraction: High-Level View
@@ -1465,6 +1466,7 @@ consider them.
 @startuml sequence_03.svg
 autoactivate on
 hide footbox
+skinparam backgroundColor #FFFFFF
 skinparam sequenceParticipant underline
 
 title Data Analysis and Extraction: High-Level View
