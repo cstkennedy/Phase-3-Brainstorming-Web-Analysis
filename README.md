@@ -1457,7 +1457,7 @@ Take note of the `new` and `delete` function "calls."
   1. `new` represents a call to a constructor (i.e., creating a new object)
 
   2. `delete` represents an object being "deallocated" (i.e., leaving scope and
-     being discarded).
+     being discarded)
 
      *Even though Java is a Garbage Collected language wherein memory
      management is not handled explicitly by a programmer... designing around
