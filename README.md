@@ -1574,3 +1574,87 @@ I recommend adding...
 ```
 
 to the dependency block within your team's `build.gradle` file.
+
+
+# Integration Tests - High-Level View
+
+The Report Writers need to be tested. Since the Report Writers need to retrieve
+data from
+
+  - `Website`
+  - `HTMLDocument`
+  - `Resource` and its associated classes
+
+and make use of various support libraries... the resulting tests are
+*Integration Tests*.
+
+For the purpose of this discussion... we will use the following definitions:
+
+  - **Unit Test** - a test that examines a single class without involving other
+    classes.
+
+  - **Integration Test** - a test that examines the interaction between two or
+    more classes.
+
+  - **System Test* - a test the examines the program as a whole (start to
+    finish).
+
+The line between integration and system tests is fuzzy.
+
+
+## Testing the Report Writers
+
+Let us take a quick look of logic invoved in testing the `TextReportWriter`.
+
+```plantuml
+@startuml test_sequence_03.svg
+autoactivate on
+hide footbox
+skinparam backgroundColor #FFFFFF
+skinparam sequenceParticipant underline
+
+title Report Generation: Integeration Test Flow
+
+
+participant ":TestTextReportWriter" as driver
+activate driver
+
+driver -> driver: setUp()
+    create "site:Website" as site
+    driver -> site: new()
+    return
+    driver -> site: [populate with "faked" pages]
+    return
+return
+
+create ":StringWriter" as strWriter
+driver -> strWriter: new()
+return
+create ":BufferedWriter" as bufWriter
+driver -> bufWriter: new(strWriter)
+return
+
+create ":TextReportWriter" as textWriter
+driver -> textWriter: new()
+return
+driver -> textWriter: setSourceData(site)
+return
+driver -> textWriter: setBaseName(...)
+return
+driver -> textWriter: write(bufWriter)
+return
+driver -> textWriter !!: delete
+
+driver ->  strWriter: toString()
+return resultStr
+
+note right: [examine "resultStr" with Hamcrest String matchers]
+
+@enduml
+```
+
+![](test_sequence_03.svg)
+
+Take note of how a `BufferWriter` and a `StringWriter` were used to capture the
+output. This is a standard trick... and the reason why I emphasize the use of
+`BufferedWriter` and `BufferedReader` so heavily.
