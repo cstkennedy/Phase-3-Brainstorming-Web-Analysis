@@ -1596,7 +1596,7 @@ For the purpose of this discussion... we will use the following definitions:
   - **Integration Test** - a test that examines the interaction between two or
     more classes.
 
-  - **System Test* - a test the examines the program as a whole (start to
+  - **System Test** - a test the examines the program as a whole (start to
     finish).
 
 The line between integration and system tests is fuzzy.
