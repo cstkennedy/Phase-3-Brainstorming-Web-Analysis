@@ -1623,8 +1623,8 @@ along the lines of...
 
   3. Check the results of calling the library, not the library itself.
 
-     *This is a nuanced difference.* Do not worry there will be an example later
-     in this discussion.
+     *This is a nuanced difference.* Do not worry... there will be an example
+     later in this discussion.
 
 
 
