@@ -295,7 +295,7 @@ Let us start by adding a little more detail to `extractImages`...
 
         for (String uriAsString : extractedStrings) {
             ResourceKind type = ResourceKind.IMAGE; 
-            long fileSizeInKiB = this.determineFileSize(uriAsString);
+
             Locality location = this.determineLocality(uriAsString, this.baseSiteURLs);
 
             Resource image = new Image();
@@ -303,8 +303,6 @@ Let us start by adding a little more detail to `extractImages`...
             // Setting the ResourceKind should be handled automatically by
             // the Image Constructors
             image.setKind(type);
-
-            image.setSize(fileSizeInKiB);
             image.setLocation(location);
 
             // We know that the only two cases are "internal" and "external"
@@ -317,6 +315,9 @@ Let us start by adding a little more detail to `extractImages`...
 
                 String pathAsString = this.convertURLToPath(uriAsString, this.baseSiteURLs);
                 image.setPath(/*converted pathAsString*/);
+
+                long fileSizeInKiB = this.determineFileSize(uriAsString);
+                image.setSize(fileSizeInKiB);
             }
             this.images.add(image);
         }
@@ -325,7 +326,67 @@ Let us start by adding a little more detail to `extractImages`...
     }
 ```
 
-There is quite a but happening here.
+There is quite a bit happening here. We introduced:
+
+  - `determineFileSize`
+  - `determineLocality`
+  - `convertURLToPath`
+  - various `Resource` setters
+
+Since this is *Java* and not Rust... I would probably introduce a
+`ResourceBuilder` (with a little `ResourceFactory` logic).
+
+A lot of my design takes inspiration from functional programmming (specifically
+the notion of pure functions). You can see a lot of that with the design we
+have discussed, e.g., differing creation of an object until we have every piece
+of data **and** have handled all expceptions.
+
+Now... the `Resource` setters are not too interesting. Note how for:
+
+  - internal images `setURL` uses `null` as the argument
+  - external images `setPath` uses `null` as the argument
+
+If the image is internal... we only care about the path. The reverse is true
+for external images (where the notion of a Path does not make sense).
+
+The three new functions (methods in this case)
+
+  - `determineFileSize`
+  - `determineLocality`
+  - `convertURLToPath`
+
+should really (in my opinion) be part of a `ResourceBuilder` class.
+
+
+## ResourceBuilder?
+
+Take a moment to revisit the `extractImage` loop...
+
+What would happen if we introduced `ResourceBuilder`?
+
+```java
+        for (String uriAsString : extractedStrings) {
+            ResourceKind type = ResourceKind.IMAGE; 
+            long fileSizeInKiB = this.determineFileSize(uriAsString);
+            Locality location = this.determineLocality(uriAsString, this.baseSiteURLs);
+
+            Resource image = new ResourceBuilder()
+                .withType(ResourceKind.IMAGE)
+                .withURI(/*uriAsString*/)
+                .usingURLContext(this.baseSiteURLs)
+                .usingSiteRootContext(this.baseSiteDirectory)
+                .determineLocality() // uriAsString was already supplied
+                .normalizePathAndURL() // baseSiteDirectoryt was alrady supplied
+                .build();
+
+            this.images.add(image);
+        }
+```
+
+All the analysis logic for a `Resource` is now wrapped up in a neat package. I
+could justify either approach. However, the Builder Pattern does result in more
+readable (and testable) code.
+
 
 # ReportManager
 
