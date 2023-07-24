@@ -366,16 +366,13 @@ What would happen if we introduced `ResourceBuilder`?
 
 ```java
         for (String uriAsString : extractedStrings) {
-            ResourceKind type = ResourceKind.IMAGE; 
-            long fileSizeInKiB = this.determineFileSize(uriAsString);
-            Locality location = this.determineLocality(uriAsString, this.baseSiteURLs);
-
             Resource image = new ResourceBuilder()
                 .withType(ResourceKind.IMAGE)
                 .withURI(/*uriAsString*/)
                 .usingURLContext(this.baseSiteURLs)
                 .usingSiteRootContext(this.baseSiteDirectory)
                 .determineLocality() // uriAsString was already supplied
+                .determineFileSizeIfLocal()
                 .normalizePathAndURL() // baseSiteDirectoryt was alrady supplied
                 .build();
 
