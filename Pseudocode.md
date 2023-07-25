@@ -339,7 +339,7 @@ Since this is *Java* and not Rust... I would probably introduce a
 A lot of my design takes inspiration from functional programmming (specifically
 the notion of pure functions). You can see a lot of that with the design we
 have discussed, e.g., differing creation of an object until we have every piece
-of data **and** have handled all expceptions.
+of data **and** have handled all exceptions.
 
 Now... the `Resource` setters are not too interesting. Note how for:
 
@@ -373,7 +373,7 @@ What would happen if we introduced `ResourceBuilder`?
                 .usingSiteRootContext(this.baseSiteDirectory)
                 .determineLocality() // uriAsString was already supplied
                 .determineFileSizeIfLocal()
-                .normalizePathAndURL() // baseSiteDirectoryt was alrady supplied
+                .normalizePathAndURL() // baseSiteDirectory was already supplied
                 .build();
 
             this.images.add(image);
@@ -388,7 +388,7 @@ readable (and testable) code.
 # ReportManager
 
 The `ReportManager` is primarily a convenience class. It creates all three
-`ReportWriter`s, handles passing them the data, and then forwards and
+`ReportWriter`s, handles passing them the data, and then forwards any
 `Exception`s to the calling code (`main` in our case).
 
 ```java
