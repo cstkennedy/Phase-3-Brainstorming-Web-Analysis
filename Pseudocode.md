@@ -115,7 +115,7 @@ public class WebsiteBuilder
             parsedDocuments.add(doc);
         }
 
-        Website site = new Website(this.path, this.urls, parseDocuments);
+        Website site = new Website(this.path, this.urls, parsedDocuments);
 
         return website;
     }
