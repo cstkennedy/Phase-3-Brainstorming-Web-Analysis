@@ -53,7 +53,7 @@ later in the process.
 ## Initial Diagram
 
 ```plantuml
-@startuml domain_01
+@startuml diagrams_uml_class/domain_01
 hide empty members
 
 class Website {
@@ -89,7 +89,7 @@ HTMLDocument o-- Anchor
 @enduml
 ```
 
-![](domain_01.svg)
+![](diagrams_uml_class/domain_01.svg)
 
 Take note of the first two classes:
 
@@ -114,7 +114,7 @@ for any data structure that can hold multiple items and be iterated over (e.g.,
 Let us explore what each class needs to store.
 
 ```plantuml
-@startuml domain_02.svg
+@startuml diagrams_uml_class/domain_02.svg
 hide empty members
 
 class Website {
@@ -162,7 +162,7 @@ HTMLDocument o-- Anchor
 @enduml
 ```
 
-![](domain_02.svg)
+![](diagrams_uml_class/domain_02.svg)
 
 
 ## Representing Types
@@ -178,7 +178,7 @@ An Enumerated Type is perfect. An `enum` is similar to a `boolean` (`true` or
 `enum` is restricted to programmer-specified categories.
 
 ```plantuml
-@startuml domain_03.svg
+@startuml diagrams_uml_class/domain_03.svg
 hide empty members
 
 class Website {
@@ -236,7 +236,7 @@ HTMLDocument o-- Anchor
 @enduml
 ```
 
-![](domain_03.svg)
+![](diagrams_uml_class/domain_03.svg)
 
 Take note of the new `Locality` box and additions to each of the resource
 classes.
@@ -249,7 +249,7 @@ The `Resource` classes are (at the moment) identical. Let us define a
 
 
 ```plantuml
-@startuml domain_04.svg
+@startuml diagrams_uml_class/domain_04.svg
 hide empty members
 
 class Website {
@@ -301,7 +301,7 @@ HTMLDocument o-- Resource
 @enduml
 ```
 
-![](domain_04.svg)
+![](diagrams_uml_class/domain_04.svg)
 
 Now that we have factored out the common data members... it is tempting to
 remove `Anchor`, `Image`, `Script`, and `Stylesheet`. However, I am not
@@ -321,7 +321,7 @@ introduce an "other" type. However, I think using `Resource` and adding another
 `enum` is a better choice.
 
 ```plantuml
-@startuml domain_05.svg
+@startuml diagrams_uml_class/domain_05.svg
 hide empty members
 
 class Website {
@@ -386,7 +386,7 @@ HTMLDocument o-- Resource
 @enduml
 ```
 
-![](domain_05.svg)
+![](diagrams_uml_class/domain_05.svg)
 
 *I will leave adding all options to `ResouceKind` up to you and your team.*
 
@@ -427,7 +427,7 @@ analysis). Let us explore how to represent the various reports.
 
 
 ```plantuml
-@startuml analysis_01.svg
+@startuml diagrams_uml_class/analysis_01.svg
 hide empty members
 
 class Website {
@@ -519,7 +519,7 @@ Report <|-- ReportExcel
 @enduml
 ```
 
-![](analysis_01.svg)
+![](diagrams_uml_class/analysis_01.svg)
 
 The reports will only examine the pieces of data that they need (and format
 that data for output). The actual extraction, parsing, and analysis operations
@@ -535,7 +535,7 @@ Let us add a few methods to the `Report` interface.
 
 
 ```plantuml
-@startuml analysis_02.svg
+@startuml diagrams_uml_class/analysis_02.svg
 hide empty members
 
 class Website {
@@ -630,7 +630,7 @@ Report <|-- ReportExcel
 @enduml
 ```
 
-![](analysis_02.svg)
+![](diagrams_uml_class/analysis_02.svg)
 
 Take note of the three methods in `Report`:
 
@@ -660,7 +660,7 @@ Let us rename
 
 
 ```plantuml
-@startuml analysis_03.svg
+@startuml diagrams_uml_class/analysis_03.svg
 hide empty members
 
 class Website {
@@ -755,7 +755,7 @@ ReportWriter <|-- ExcelReportWriter
 @enduml
 ```
 
-![](analysis_03.svg)
+![](diagrams_uml_class/analysis_03.svg)
 
 
 ## Something Does Not Fit
@@ -776,7 +776,7 @@ Perhaps it should really be a `ReportManager` class. A class that handles the:
 
 
 ```plantuml
-@startuml analysis_04.svg
+@startuml diagrams_uml_class/analysis_04.svg
 hide empty members
 
 class Website {
@@ -876,7 +876,7 @@ ReportManager --> "3" ReportWriter: "creates and manages"
 @enduml
 ```
 
-![](analysis_04.svg)
+![](diagrams_uml_class/analysis_04.svg)
 
 I am much happier with that. Note the four functions in `ReportManager`
 
@@ -907,7 +907,7 @@ will come into play. Let us start by adding two classes:
 
 
 ```plantuml
-@startuml analysis_05.svg
+@startuml diagrams_uml_class/analysis_05.svg
 hide empty members
 
 class Website {
@@ -1015,7 +1015,7 @@ ReportManager --> "3" ReportWriter: "creates and manages"
 @enduml
 ```
 
-![](analysis_05.svg)
+![](diagrams_uml_class/analysis_05.svg)
 
 But... where do `WebsiteBuilder` and `HTMLDocumentBuilder` *fit*?
 
@@ -1030,7 +1030,7 @@ But... where do `WebsiteBuilder` and `HTMLDocumentBuilder` *fit*?
      logic will exist.
 
 ```plantuml
-@startuml analysis_06.svg
+@startuml diagrams_uml_class/analysis_06.svg
 hide empty members
 
 class Website {
@@ -1149,7 +1149,7 @@ HTMLDocumentBuilder --> HTMLDocument: "constructs"
 @enduml
 ```
 
-![](analysis_06.svg)
+![](diagrams_uml_class/analysis_06.svg)
 
 Take note of how `WebsiteBuilder` depends on `HTMLDocumentBuilder`. While the
 former may identify files to examine... the latter handles the actual parsing.
@@ -1168,7 +1168,7 @@ The actual object creation does not occur until `build` is called.
 Let us add the resource extraction methods.
 
 ```plantuml
-@startuml analysis_07.svg
+@startuml diagrams_uml_class/analysis_07.svg
 hide empty members
 
 class Website {
@@ -1294,7 +1294,7 @@ HTMLDocumentBuilder --> HTMLDocument: "constructs"
 @enduml
 ```
 
-![](analysis_07.svg)
+![](diagrams_uml_class/analysis_07.svg)
 
 We have quite a few additions. The first two methods pass in the two pieces of
 data we need for path normalization and resouce classification:
