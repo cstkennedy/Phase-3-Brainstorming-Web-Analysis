@@ -9,3 +9,4 @@ This file `README.md` has been split into three files:
   - [00-Initial-Brainstorming.md](https://github.com/cstkennedy/Phase-3-Brainstorming-Web-Analysis/blob/main/00-Initial-Brainstorming.md)
   - [01-Program-Flow.md](https://github.com/cstkennedy/Phase-3-Brainstorming-Web-Analysis/blob/main/01-Program-Flow.md)
   - [02-Integration-Test-Methodology.md](https://github.com/cstkennedy/Phase-3-Brainstorming-Web-Analysis/blob/main/02-Integration-Test-Methodology.md)
+  - [04-Pseudocode.md](https://github.com/cstkennedy/Phase-3-Brainstorming-Web-Analysis/blob/main/04-Pseudocode.md)
